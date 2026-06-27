@@ -1,32 +1,39 @@
 import Link from "next/link";
 
 import { getPosts } from "@/app/lib/posts";
+import styles from "../editorial.module.css";
 
 export default function BlogPage() {
   const posts = getPosts();
+
   return (
-    <div className="px-8 py-10">
-      <h1 className="mb-8 text-3xl font-bold">Blog</h1>
+    <main className={styles.shell}>
+      <div className={styles.container}>
+        <header className={styles.siteHeader}>
+          <Link href="/" className={styles.siteName}>
+            Dev Notes
+          </Link>
+          <nav aria-label="Primary navigation">
+            <Link href="/blog">Blog</Link>
+          </nav>
+        </header>
 
-      <div className="space-y-6">
-        {posts.map((post) => (
-          <div
-            key={post.slug}
-            className="border-b border-zinc-700 pb-6"
-          >
-            <Link
-              href={`/blog/${post.slug}`}
-              className="text-2xl font-semibold hover:text-blue-400 transition-colors"
-            >
-              {post.title}
-            </Link>
+        <section className={styles.pageIntro}>
+          <h1>Blog</h1>
+          <p>Articles and notes about building modern web applications.</p>
+        </section>
 
-            <p className="mt-2 text-zinc-400">
-              {post.description}
-            </p>
-          </div>
-        ))}
+        <ul className={styles.postList}>
+          {posts.map((post) => (
+            <li key={post.slug} className={styles.postItem}>
+              <Link href={`/blog/${post.slug}`}>
+                <h2>{post.title}</h2>
+                <p>{post.description}</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
-    </div>
+    </main>
   );
 }

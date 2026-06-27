@@ -1,6 +1,8 @@
-import { getPostBySlug } from "@/app/lib/posts";
-
 import type { Metadata } from "next";
+import Link from "next/link";
+
+import { getPostBySlug } from "@/app/lib/posts";
+import styles from "../../editorial.module.css";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -8,12 +10,10 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = getPostBySlug(slug);
 
   if (!post) {
-    return {
-      title: "Post Not Found",
-    };
+    return { title: "Post Not Found" };
   }
 
   return {
@@ -28,21 +28,43 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = getPostBySlug(slug);
 
   if (!post) {
     return <h1>Post Not Found</h1>;
   }
 
   return (
-    <article className="mx-auto mt-10 max-w-4xl rounded-xl border border-zinc-800 bg-zinc-900 p-8 shadow-lg">
-      <h1 className="mb-4 text-4xl font-bold text-white">{post.title}</h1>
+    <main className={styles.shell}>
+      <div className={styles.container}>
+        <header className={styles.siteHeader}>
+          <Link href="/" className={styles.siteName}>
+            Dev Notes
+          </Link>
+          <nav aria-label="Primary navigation">
+            <Link href="/blog">Blog</Link>
+          </nav>
+        </header>
 
-      <p className="mb-8 text-lg text-zinc-400">{post.description}</p>
+        <article className={styles.article}>
+          <Link href="/blog" className={styles.backLink}>
+            &larr; Back to blog
+          </Link>
 
-      <div className="border-t border-zinc-700 pt-6">
-        <p className="leading-8 text-zinc-300">{post.content}</p>
+          <header className={styles.articleHeader}>
+            <h1>{post.title}</h1>
+            <p>{post.description}</p>
+          </header>
+
+          <div className={styles.articleBody}>
+            <p>{post.content}</p>
+          </div>
+
+          <footer className={styles.articleFooter}>
+            <Link href="/blog">View all posts</Link>
+          </footer>
+        </article>
       </div>
-    </article>
+    </main>
   );
 }
